@@ -31,6 +31,5 @@ public:
     static int unlockMut(const char *identifier);
 };
 
-#endif
 
 #endif //CPPSERVER_THREAD_H

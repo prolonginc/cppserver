@@ -1,8 +1,15 @@
-//
-// Created by sari yono on 4/16/17.
-//
+#include "client.h"
 
-#include "Client.h"
+using namespace std;
 
+Client::Client() {
+    this->clientName = (string *) malloc(NAME_MAX_LENGTH+1);
+}
 
-//todo implement the Client class and commit before thursday
+void Client::setClientName(string *name) {
+    this->clientName = name;
+}
+
+void Client::setClientId(int id) {
+    this->clientId = id;
+}

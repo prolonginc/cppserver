@@ -8,18 +8,19 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#define NAME_MAX_LENGTH 20
 
 using namespace std;
 class Client {
 public:
-    char *clientName;
+    string *clientName;
     int clientId;
     int socket;
 
 public:
     Client();
     //name and id setters
-    void SetClientName(const char *name);
-    void SetClientId(int id);
+    void setClientName(std::string *clientName);
+    void setClientId(int id);
 };
 #endif //CPPSERVER_CLIENT_H

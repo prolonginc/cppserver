@@ -17,8 +17,9 @@
 #include <netinet/in.h>
 //the client class
 #include "client.h"
+#include "thread.h"
 
-#define PORT 1008
+#define PORT 30001
 
 using namespace std;
 
@@ -28,13 +29,13 @@ private:
     //initiate a vector for Clients
     static vector<Client> chatClients;
 
-    int serverSocket, clientSocket;
+   int serverSocket, clientSocket;
 
     //https://www.gta.ufrj.br/ensino/eel878/sockets/sockaddr_inman.html
 
     struct sockaddr_in serverAddr, clientAddr;
     //buffer size
-    char buffer[512];
+    char buffer[256];
 
 public:
     Server();
@@ -42,8 +43,9 @@ public:
     static void * ClientHandler(void *args);
 
 private:
+
     static void ListClients();
-    static void PublicBroadcast(char *message);
+    static void PublicBroadcast(string *message);
     static int getClientIndex(Client *c);
 };
 
