@@ -13,9 +13,7 @@ Server::Server() {
 
     //Initialize the  mutex
     Thread::initMut();
-
     int yes = 1;
-
     //https://www.cs.cmu.edu/afs/cs/academic/class/15213-f99/www/class26/tcpserver.c
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     memset(&serverAddr, 0, sizeof(sockaddr_in));
@@ -23,15 +21,12 @@ Server::Server() {
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(PORT);
 
-
-    //Avoid bind error if the socket was not close()'d last time;
+    //check if socket was closed last time;
     setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
     if(::bind(serverSocket, (struct sockaddr *) &serverAddr, sizeof(sockaddr_in)) < 0)
         cerr << "Failed during the binding process";
-
         listen(serverSocket, 5);
-
 }
 
 void Server::receiveAndSend() {
@@ -40,8 +35,6 @@ void Server::receiveAndSend() {
     Thread *thread;
 
     socklen_t cliSize = sizeof(sockaddr_in);
-
-
     //run forever
     while(true) {
 
@@ -59,21 +52,22 @@ void Server::receiveAndSend() {
     }
 }
 
+//todo use one lock, and change everything to a string.
+
 void *Server::ClientHandler(void *args) {
 
-    //Pointer to accept()'ed Client
+    //client Pointer
     Client *client = (Client *) args;
     string buffer[256-25];
     string message[256];
     int index;
     int n;
 
-    //Add client in Static clients <vector> (Critical section!)
+    //Add client to the clients vector
     Thread::lockMut((const char *) client->clientName);
 
-    //Before adding the new client, calculate its id. (Now we have the lock)
+    //set the id of the client by getting the largest index of the vector
     client->setClientId(Server::chatClients.size());
-//    sprintf(buffer, "Client n.%d", client->clientId);
     client->setClientName(buffer);
     cout << "Adding client with id: " << client->clientId << endl;
     Server::chatClients.push_back(*client);
@@ -143,6 +137,7 @@ void Server::ListClients() {
 /*
   Should be called when vector<Client> clients is locked!
 */
+
 int Server::getClientIndex(Client *client) {
     for(size_t i=0; i<chatClients.size(); i++) {
         if((Server::chatClients[i].clientId) == client->clientId) return (int) i;
@@ -150,3 +145,6 @@ int Server::getClientIndex(Client *client) {
     cerr << "clientId not found." << endl;
     return -1;
 }
+
+//todo thread should belong to a client.
+
