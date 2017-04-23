@@ -6,6 +6,8 @@
 
 using namespace std;
 
+//toDo move the thread to the client
+
 //Actually allocate clients
 vector<Client> Server::chatClients;
 
@@ -52,19 +54,19 @@ void Server::receiveAndSend() {
     }
 }
 
-//todo use one lock, and change everything to a string.
+//todo use one lock.
 
 void *Server::ClientHandler(void *args) {
 
     //client Pointer
     Client *client = (Client *) args;
-    string buffer[256-25];
-    string message[256];
+    char buffer [256 -25];
+    string message;
     int index;
     int n;
 
     //Add client to the clients vector
-    Thread::lockMut((const char *) client->clientName);
+    Thread::lockMut((const string) client->clientName);
 
     //set the id of the client by getting the largest index of the vector
     client->setClientId(Server::chatClients.size());
@@ -72,10 +74,11 @@ void *Server::ClientHandler(void *args) {
     cout << "Adding client with id: " << client->clientId << endl;
     Server::chatClients.push_back(*client);
 
-    Thread::unlockMut((const char *) client->clientName);
+    Thread::unlockMut((const string) client->clientName);
 
     while(1) {
-        memset(buffer, 0, sizeof buffer);
+
+//        memset(buffer, 0, sizeof buffer);
         n = recv(client->socket, buffer, sizeof buffer, 0);
 
         //Client disconnected?
@@ -84,14 +87,14 @@ void *Server::ClientHandler(void *args) {
             close(client->socket);
 
             //Remove client in Static clients <vector> (Critical section!)
-            Thread::lockMut((const char *) client->clientName);
+            Thread::lockMut((const string) client->clientName);
 
             index = Server::getClientIndex(client);
             cout << "earse user with index:  " << index << "andid is: "
                  << Server::chatClients[index].clientId << endl;
             Server::chatClients.erase(Server::chatClients.begin() + index);
 
-            Thread::unlockMut((const char *) client->clientName);
+            Thread::unlockMut((const string ) client->clientName);
 
             break;
         }
@@ -99,10 +102,8 @@ void *Server::ClientHandler(void *args) {
             cerr << "receive error: " << client->clientName << endl;
         }
         else {
-            //Message is here now broadcast.
-            cout << message << " " << client->clientName  << "  "  << buffer;
-            cout << "Will send to all: " << message << endl;
-            Server::PublicBroadcast(message);
+            //broadcast the buffer
+            Server::PublicBroadcast(buffer);
         }
     }
 
@@ -110,17 +111,15 @@ void *Server::ClientHandler(void *args) {
     return NULL;
 }
 
-void Server::PublicBroadcast(string *message) {
+void Server::PublicBroadcast(string message) {
     int size;
 
     //Acquire the lock
     Thread::lockMut("'PublicBroadcast()'");
 
     for(size_t i=0; i<chatClients.size(); i++) {
-
-//       ssize_t	send(int, const void *, size_t, int) __DARWIN_ALIAS_C(send);
         cout << message << endl ;
-        size = send(Server::chatClients[i].socket, message, message->length(),0);
+        size = send(Server::chatClients[i].socket, message.c_str(), message.length(),0);
         cout << size << " sent bytes." << endl;
     }
 
@@ -146,5 +145,4 @@ int Server::getClientIndex(Client *client) {
     return -1;
 }
 
-//todo thread should belong to a client.
 

@@ -13,14 +13,14 @@
 using namespace std;
 class Client {
 public:
-    string *clientName;
+    string clientName;
     int clientId;
     int socket;
 
 public:
     Client();
     //name and id setters
-    void setClientName(std::string *clientName);
+    void setClientName(std::string clientName);
     void setClientId(int id);
 };
 #endif //CPPSERVER_CLIENT_H

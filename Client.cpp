@@ -3,10 +3,10 @@
 using namespace std;
 
 Client::Client() {
-    this->clientName = (string *) malloc(NAME_MAX_LENGTH+1);
+//    this->clientName = (string *) malloc(NAME_MAX_LENGTH+1);
 }
 
-void Client::setClientName(string *name) {
+void Client::setClientName(string name) {
     this->clientName = name;
 }
 

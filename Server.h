@@ -20,6 +20,7 @@
 #include "thread.h"
 
 #define PORT 30001
+#define DEFAULT_BUFLEN 512
 
 using namespace std;
 
@@ -45,7 +46,7 @@ public:
 private:
 
     static void ListClients();
-    static void PublicBroadcast(string *message);
+    static void PublicBroadcast(string message);
     static int getClientIndex(Client *c);
 };
 

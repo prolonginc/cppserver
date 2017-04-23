@@ -48,7 +48,7 @@ int Thread::initMut() {
     }
 }
 
-int Thread::lockMut(const char *identifier) {
+int Thread::lockMut(const string identifier) {
     if(pthread_mutex_lock(&Thread::mut) == 0) {
         return 0;
     }
@@ -58,7 +58,7 @@ int Thread::lockMut(const char *identifier) {
     }
 }
 
-int Thread::unlockMut(const char *identifier) {
+int Thread::unlockMut(const string identifier) {
     cout << identifier << " trying to lock" << endl;
     if(pthread_mutex_unlock(&Thread::mut) == 0) {
         //todo clean up by removing those after debugging complete

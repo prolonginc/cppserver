@@ -27,8 +27,8 @@ public:
     int connect();
 
     static int initMut();
-    static int lockMut(const char *identifier);
-    static int unlockMut(const char *identifier);
+    static int lockMut(const string identifier);
+    static int unlockMut(const string identifier);
 };
 
 
